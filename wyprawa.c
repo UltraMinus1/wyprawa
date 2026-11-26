@@ -157,6 +157,10 @@ void handle_pickup(wchar_t* symbol, int* diamenty) {
 	if (*symbol == L'$') {
 		*diamenty += 1;
 		*symbol = L'.';
+	} else if(*symbol == L'O') {
+		system("clear");
+		wprintf(L"przegrales :(\n");
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -165,7 +169,7 @@ void save(int x, int y, int n, int m, wchar_t plansza[Y_MAX][X_MAX], int diament
 	//kolejne: plansza
 	system("clear");
 	char nazwa_zapisu[55];
-	wprintf(L"podaj nazwe zapisu(max 50 znakow):     ");
+	wprintf(L"podaj nazwe zapisu(max 50 znakow): ");
 	scanf("%50s", nazwa_zapisu);
 	strcat(nazwa_zapisu, ".wgs");
 	FILE* saveFile;
