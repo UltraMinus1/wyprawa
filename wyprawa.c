@@ -147,6 +147,14 @@ void save(int x, int y, int n, int m, wchar_t plansza[n][m], int diamenty) {
 	wprintf(L"podaj nazwe zapisu(max 50 znakow):     ");
 	scanf("%50s", nazwa_zapisu);
 	strcat(nazwa_zapisu, ".wgs");
-	wprintf(L"%s\n", nazwa_zapisu);
+	FILE* saveFile;
+	saveFile = fopen(nazwa_zapisu, "w");
+	fwprintf(saveFile, L"%d %d %d %d %d\n", x, y, n, m, diamenty);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			putwc(plansza[i][j], saveFile);
+		}
+		putwc(L'\n', saveFile);
+	}
 	exit(EXIT_SUCCESS);
 }
