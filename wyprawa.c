@@ -26,6 +26,7 @@ void handle_pickup(wchar_t* symbol, int* diamenty);
 void save(int x, int y, int n, int m, wchar_t plansza[Y_MAX][X_MAX], int diamenty);
 void load(int* n, int* m, int* x, int* y, int* diamenty, wchar_t plansza[Y_MAX][X_MAX]);
 int licz_diamenty(int n, int m, wchar_t plansza[Y_MAX][X_MAX]);
+void write_to_log(char* text);
 
 int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
@@ -35,6 +36,7 @@ int main(int argc, char *argv[]) {
 	wchar_t plansza[Y_MAX][X_MAX];
 	if (argc == 1) {
 		load(&n, &m, &x, &y, &diamenty, plansza);
+		write_to_log("loaded a game");
 	} else if (argc == 4) {
 		x = y = diamenty = 0;
 		FILE* file;
@@ -53,7 +55,7 @@ int main(int argc, char *argv[]) {
 			printf("blendny plik inicjujacy\n");
 			return 1;
 		}	
-
+		write_to_log("started a new game");
 	} else {
 		printf("niepoprawna ilosc argumentow\n");
 		printf("wywolaj program w nastepujacy sposob:\n");
@@ -76,6 +78,7 @@ int main(int argc, char *argv[]) {
 	}
 	system("clear");
 	wprintf(L"gratulacje wygrales\n");
+	write_to_log("gracz wygral");
 	return 0;
 }
 
@@ -157,9 +160,11 @@ void handle_pickup(wchar_t* symbol, int* diamenty) {
 	if (*symbol == L'$') {
 		*diamenty += 1;
 		*symbol = L'.';
+		write_to_log("gracz podniusl diament");
 	} else if(*symbol == L'O') {
 		system("clear");
 		wprintf(L"przegrales :(\n");
+		write_to_log("gracz wpadl do dziury");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -181,6 +186,7 @@ void save(int x, int y, int n, int m, wchar_t plansza[Y_MAX][X_MAX], int diament
 		}
 		putc('\n', saveFile);
 	}
+	write_to_log("zapisano gre");
 	exit(EXIT_SUCCESS);
 }
 
@@ -188,7 +194,7 @@ void load(int* n, int* m, int* x, int* y, int* diamenty, wchar_t plansza[Y_MAX][
 	char saveName[55];
 	system("clear");
 	wprintf(L"ktory z tych plikow chcesz zaladowac?\n");
-	system("ls . | grep *.wgs");
+	system("ls . | grep '.wgs'");
 	wprintf(L"------------------------\n");
 	scanf("%54s", saveName);
 	FILE* file;
@@ -213,4 +219,11 @@ int licz_diamenty(int n, int m, wchar_t plansza[Y_MAX][X_MAX]) {
 		}
 	}
 	return ile;
+}
+
+void write_to_log(char* text) {
+	FILE* logFile;
+	logFile = fopen("log.txt", "a");
+	fprintf(logFile, "%s\n", text);
+	fclose(logFile);
 }
