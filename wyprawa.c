@@ -2,6 +2,7 @@
 #include <wchar.h>
 #include <locale.h>
 #include <stdlib.h>
+#include <string.h>
 
 int str_to_int(char* str) {
 	int i = 0, num = 0;
@@ -16,9 +17,10 @@ int str_to_int(char* str) {
 void render(int n, int m, wchar_t plansza[n][m], int x, int y, wchar_t* chop, int* diamenty);
 int wczytaj_mape(FILE* file, int n, int m, wchar_t plansza[n][m]);
 int validuj_mape(int n, int m, wchar_t plansza[n][m]);
-void handle_input(int* x, int* y, int n, int m, int chop_len);
+void handle_input(int* x, int* y, int n, int m, int chop_len, int diamenty, wchar_t plansza[n][m]);
 void validate_move(int* x, int* y, int n, int m, int chop_len);
 void handle_pickup(wchar_t* symbol, int* diamenty);
+void save(int x, int y, int n, int m, wchar_t plansza[n][m], int diamenty);
 
 int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
@@ -51,7 +53,7 @@ int main(int argc, char *argv[]) {
 	//game loop
 	while (1) {
 		render(n, m, plansza, x, y, chopek, &diamenty);
-		handle_input(&x, &y, n, m, actual_len);
+		handle_input(&x, &y, n, m, actual_len, diamenty, plansza);
 	}
 	return 0;
 }
@@ -62,7 +64,7 @@ int wczytaj_mape(FILE* file, int n, int m, wchar_t plansza[n][m]) {
 		for (int j = 0; j < m; j++) {
 			plansza[i][j] = getwc(file);		
 		}
-    		getwc(file);
+		getwc(file);
 	}
 	return 0;
 }
@@ -76,7 +78,7 @@ int validuj_mape(int n, int m, wchar_t plansza[n][m]) {
 	}
 	return 1;
 }
-void handle_input(int* x, int* y, int n, int m, int chop_len) {
+void handle_input(int* x, int* y, int n, int m, int chop_len, int diamenty, wchar_t plansza[n][m]) {
 	char move;
 	scanf(" %c", &move);
 	switch (move) {
@@ -91,6 +93,9 @@ void handle_input(int* x, int* y, int n, int m, int chop_len) {
 			break;
 		case 'd':
 			*x += 1;
+			break;
+		case 'z':
+			save(*x, *y, n, m, plansza, diamenty);
 			break;
 	}
 	validate_move(x, y, n, m, chop_len);
@@ -132,4 +137,16 @@ void handle_pickup(wchar_t* symbol, int* diamenty) {
 		*diamenty += 1;
 		*symbol = L'.';
 	}
+}
+
+void save(int x, int y, int n, int m, wchar_t plansza[n][m], int diamenty) {
+	//pierwszy rzad: x y n m diamenty
+	//kolejne: plansza
+	system("clear");
+	char nazwa_zapisu[55];
+	wprintf(L"podaj nazwe zapisu(max 50 znakow):     ");
+	scanf("%50s", nazwa_zapisu);
+	strcat(nazwa_zapisu, ".wgs");
+	wprintf(L"%s\n", nazwa_zapisu);
+	exit(EXIT_SUCCESS);
 }
