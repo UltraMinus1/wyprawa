@@ -25,6 +25,7 @@ void validate_move(int* x, int* y, int n, int m, int chop_len);
 void handle_pickup(wchar_t* symbol, int* diamenty);
 void save(int x, int y, int n, int m, wchar_t plansza[Y_MAX][X_MAX], int diamenty);
 void load(int* n, int* m, int* x, int* y, int* diamenty, wchar_t plansza[Y_MAX][X_MAX]);
+int licz_diamenty(int n, int m, wchar_t plansza[Y_MAX][X_MAX]);
 
 int main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
@@ -59,6 +60,8 @@ int main(int argc, char *argv[]) {
 		printf("./wyprawa <n> <m> <scierzka do pliku z mapa>\n");
 		return 1;
 	}
+
+	int do_wygrania = licz_diamenty(n, m, plansza) + diamenty;
 	
 	
 	
@@ -66,10 +69,13 @@ int main(int argc, char *argv[]) {
 	int actual_len = 10;
 	
 	//game loop
-	while (1) {
-		render(n, m, plansza, x, y, chopek, &diamenty);
+	render(n, m, plansza, x, y, chopek, &diamenty);
+	while (diamenty < do_wygrania) {
 		handle_input(&x, &y, n, m, actual_len, diamenty, plansza);
+		render(n, m, plansza, x, y, chopek, &diamenty);
 	}
+	system("clear");
+	wprintf(L"gratulacje wygrales\n");
 	return 0;
 }
 
@@ -191,4 +197,16 @@ void load(int* n, int* m, int* x, int* y, int* diamenty, wchar_t plansza[Y_MAX][
 		getwc(file);
 	}
 	fclose(file);
+}
+
+int licz_diamenty(int n, int m, wchar_t plansza[Y_MAX][X_MAX]) {
+	int ile = 0;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (plansza[i][j] == L'$') {
+				ile++;
+			}
+		}
+	}
+	return ile;
 }
